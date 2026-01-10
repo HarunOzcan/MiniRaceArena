@@ -49,7 +49,9 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\CarController.cs" />
     <Compile Include="Assets\Scripts\FinishLineTrigger.cs" />
+    <Compile Include="Assets\Scripts\CheckpointTrigger.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
+    <Compile Include="Assets\Scripts\RaceProgress.cs" />
     <Compile Include="Assets\Scripts\CameraShake.cs" />
     <Compile Include="Assets\Scripts\WheelSteerVisual.cs" />
     <Compile Include="Assets\Scripts\LapManager.cs" />
