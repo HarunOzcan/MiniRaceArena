@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Events;
 
 public class LapManager : MonoBehaviour
 {
@@ -10,31 +9,35 @@ public class LapManager : MonoBehaviour
     [SerializeField] private int currentLap = 0;
     [SerializeField] private bool raceFinished = false;
 
-    [Header("Optional Events")]
-    public UnityEvent onRaceStart;
-    public UnityEvent onLapCompleted;
-    public UnityEvent onRaceFinished;
+    [Header("UI References")]
+    public RaceUIManager uiManager;
+    public RaceHUD hud;
 
     public int CurrentLap => currentLap;
-    public int TotalLaps => totalLaps;
     public bool RaceFinished => raceFinished;
 
     void Start()
     {
-        // Yarış başlatılmış gibi kabul ediyoruz (istersen sonra countdown ekleriz)
         currentLap = 0;
         raceFinished = false;
-        onRaceStart?.Invoke();
+        Time.timeScale = 1f;
+
+        // HUD ilk değer
+        if (hud != null)
+            hud.UpdateLap();
     }
 
+    // FinishLineTrigger burayı çağırır
     public void RegisterLap()
     {
         if (raceFinished) return;
 
         currentLap++;
-
-        onLapCompleted?.Invoke();
         Debug.Log($"🏁 LAP: {currentLap}/{totalLaps}");
+
+        // HUD güncelle
+        if (hud != null)
+            hud.UpdateLap();
 
         if (currentLap >= totalLaps)
         {
@@ -45,13 +48,17 @@ public class LapManager : MonoBehaviour
     private void FinishRace()
     {
         raceFinished = true;
-        Debug.Log("✅ RACE FINISHED!");
-        onRaceFinished?.Invoke();
+        Debug.Log("✅ RACE FINISHED");
 
-        // Basit bitiriş: zamanı durdur
+        // HUD timer durdur
+        if (hud != null)
+            hud.StopTimer();
+
+        // Finish panel aç
+        if (uiManager != null)
+            uiManager.ShowFinish();
+
         Time.timeScale = 0f;
-
-        // Cursor serbest (istersen)
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
