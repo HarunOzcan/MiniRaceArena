@@ -3,6 +3,9 @@
 [RequireComponent(typeof(Rigidbody))]
 public class CarController : MonoBehaviour
 {
+    [Header("Player")]
+    public int playerID = 0; // 0=P1, 1=P2, 2=P3, 3=P4
+
     [Header("Movement")]
     public float motorForce = 1500f;
     public float maxSpeed = 20f;
@@ -37,27 +40,47 @@ public class CarController : MonoBehaviour
 
     void FixedUpdate()
     {
-        float vertical = Input.GetAxisRaw("Vertical");        // W / S
-        float horizontal = Input.GetAxisRaw("Horizontal");    // A / D
-        bool handbrake = Input.GetKey(KeyCode.Space);         // SPACE
+        float vertical = 0f;
+        float horizontal = 0f;
+        bool handbrake = false;
+
+        // -------- PLAYER INPUT AYIRMA --------
+        if (playerID == 0) // Player 1 → WASD
+        {
+            vertical = Input.GetAxisRaw("Vertical");
+            horizontal = Input.GetAxisRaw("Horizontal");
+            handbrake = Input.GetKey(KeyCode.Space);
+        }
+        else if (playerID == 1) // Player 2 → I J K L
+        {
+            vertical = (Input.GetKey(KeyCode.I) ? 1 : 0) - (Input.GetKey(KeyCode.K) ? 1 : 0);
+            horizontal = (Input.GetKey(KeyCode.L) ? 1 : 0) - (Input.GetKey(KeyCode.J) ? 1 : 0);
+            handbrake = Input.GetKey(KeyCode.RightShift);
+        }
+        else if (playerID == 2) // Player 3 → Arrow Keys
+        {
+            vertical = (Input.GetKey(KeyCode.UpArrow) ? 1 : 0) - (Input.GetKey(KeyCode.DownArrow) ? 1 : 0);
+            horizontal = (Input.GetKey(KeyCode.RightArrow) ? 1 : 0) - (Input.GetKey(KeyCode.LeftArrow) ? 1 : 0);
+            handbrake = Input.GetKey(KeyCode.RightControl);
+        }
+        else if (playerID == 3) // Player 4 → Numpad
+        {
+            vertical = (Input.GetKey(KeyCode.Keypad8) ? 1 : 0) - (Input.GetKey(KeyCode.Keypad5) ? 1 : 0);
+            horizontal = (Input.GetKey(KeyCode.Keypad6) ? 1 : 0) - (Input.GetKey(KeyCode.Keypad4) ? 1 : 0);
+            handbrake = Input.GetKey(KeyCode.Keypad0);
+        }
 
         /* -------- GAZ -------- */
         if (vertical > 0 && rb.linearVelocity.magnitude < maxSpeed)
         {
-            rb.AddForce(
-                transform.forward * vertical * motorForce * Time.fixedDeltaTime,
-                ForceMode.Acceleration
-            );
+            rb.AddForce(transform.forward * vertical * motorForce * Time.fixedDeltaTime, ForceMode.Acceleration);
         }
 
-        /* -------- NORMAL FREN -------- */
+        /* -------- FREN -------- */
         if (vertical < 0 && rb.linearVelocity.magnitude > 0.1f)
         {
             Vector3 brakeDir = -rb.linearVelocity.normalized;
-            rb.AddForce(
-                brakeDir * brakeForce * Time.fixedDeltaTime,
-                ForceMode.Acceleration
-            );
+            rb.AddForce(brakeDir * brakeForce * Time.fixedDeltaTime, ForceMode.Acceleration);
         }
 
         /* -------- DÖNÜŞ -------- */
@@ -70,26 +93,20 @@ public class CarController : MonoBehaviour
         /* -------- EL FRENİ -------- */
         rb.linearDamping = handbrake ? handbrakeDamping : normalDamping;
 
-        /* -------- YAN KAYMA KONTROLÜ -------- */
+        /* -------- YAN KAYMA -------- */
         ApplySideGrip(handbrake);
     }
 
     void ApplySideGrip(bool handbrake)
     {
         Vector3 localVelocity = transform.InverseTransformDirection(rb.linearVelocity);
-
         float grip = handbrake ? handbrakeSideGrip : sideGrip;
 
-        localVelocity.x = Mathf.Lerp(
-            localVelocity.x,
-            0f,
-            grip * Time.fixedDeltaTime
-        );
-
+        localVelocity.x = Mathf.Lerp(localVelocity.x, 0f, grip * Time.fixedDeltaTime);
         rb.linearVelocity = transform.TransformDirection(localVelocity);
     }
 
-    /* -------- ÇARPIŞMA → KAMERA SHAKE -------- */
+    /* -------- ÇARPIŞMA SHAKE -------- */
     void OnCollisionEnter(Collision collision)
     {
         if (cameraShake == null) return;

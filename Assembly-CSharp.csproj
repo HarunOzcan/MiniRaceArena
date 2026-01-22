@@ -50,14 +50,18 @@
     <Compile Include="Assets\Scripts\CarController.cs" />
     <Compile Include="Assets\Scripts\FinishLineTrigger.cs" />
     <Compile Include="Assets\Scripts\CheckpointTrigger.cs" />
+    <Compile Include="Assets\Scripts\PlayerCountMenu.cs" />
     <Compile Include="Assets\Scripts\RaceHUD.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\Scripts\RaceProgress.cs" />
+    <Compile Include="Assets\Scripts\CarSpawner.cs" />
     <Compile Include="Assets\Scripts\RaceUIManager.cs" />
     <Compile Include="Assets\Scripts\CameraShake.cs" />
     <Compile Include="Assets\Scripts\WheelSteerVisual.cs" />
     <Compile Include="Assets\Scripts\LapManager.cs" />
+    <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\CameraFollow.cs" />
+    <Compile Include="Assets\Scripts\RacePositionManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
